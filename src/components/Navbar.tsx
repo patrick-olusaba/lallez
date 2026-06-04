@@ -76,7 +76,10 @@ const Navbar: React.FC = () => {
   return (
     <header className="header">
       <Link id="logo" aria-label="Home" to="/">
-        <img src="/made-by-lallez.png" alt="Made by Lallez" />
+        <img
+          src={theme === 'dark' ? '/white-logo.png' : '/black-logo.png'}
+          alt="Made by Lallez"
+        />
       </Link>
 
       <nav>
