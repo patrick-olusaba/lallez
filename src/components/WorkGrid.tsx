@@ -19,9 +19,9 @@ const parseCloudinaryParams = (url: string): { cloudName: string; publicId: stri
   return null;
 };
 
-/** Build a direct Cloudinary MP4 URL for hover preview. */
+/** Build a direct Cloudinary MP4 URL for hover preview — low quality, small size. */
 const buildCloudinaryVideoUrl = (cloudName: string, publicId: string) =>
-  `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.mp4`;
+  `https://res.cloudinary.com/${cloudName}/video/upload/q_auto:eco,w_640/${publicId}.mp4`;
 
 /** Build a Cloudinary thumbnail (first frame) as a poster/fallback image. */
 const buildCloudinaryPosterUrl = (cloudName: string, publicId: string) =>

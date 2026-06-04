@@ -10,26 +10,40 @@ const INTERVAL_MS = 5000;
 const isCloudinaryEmbed = (url: string) =>
   url.includes('player.cloudinary.com/embed');
 
-/** Get a playable video URL for the slideshow, deriving direct URL from embed if needed. */
+/**  Get a playable video URL for the slideshow, deriving direct URL from embed if needed.
+ *  Uses Cloudinary transformations (q_auto:good,w_1920) for fast full-screen loading. */
 const getSlideshowVideoUrl = (p: Project): string => {
   if (p.videoUrl && !isCloudinaryEmbed(p.videoUrl)) return p.videoUrl;
-  if (p.embedUrl) {
+  const derive = (url: string) => {
     try {
-      const u = new URL(p.embedUrl);
+      const u = new URL(url);
       const cn = u.searchParams.get('cloud_name');
       const pid = u.searchParams.get('public_id');
-      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/${pid}.mp4`;
+      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/q_auto:good,w_1920/${pid}.mp4`;
     } catch { /* fall through */ }
-  }
-  if (isCloudinaryEmbed(p.videoUrl)) {
-    try {
-      const u = new URL(p.videoUrl);
-      const cn = u.searchParams.get('cloud_name');
-      const pid = u.searchParams.get('public_id');
-      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/${pid}.mp4`;
-    } catch { /* fall through */ }
-  }
+    return null;
+  };
+  if (p.embedUrl) return derive(p.embedUrl) ?? p.videoUrl ?? '';
+  if (isCloudinaryEmbed(p.videoUrl)) return derive(p.videoUrl) ?? '';
   return p.videoUrl || '';
+};
+
+/** Get a poster image so there's a still frame instead of black while video loads. */
+const getSlideshowPoster = (p: Project): string | undefined => {
+  if (p.thumbnailUrl) return p.thumbnailUrl;
+  // Derive first-frame poster from Cloudinary
+  const derive = (url: string) => {
+    try {
+      const u = new URL(url);
+      const cn = u.searchParams.get('cloud_name');
+      const pid = u.searchParams.get('public_id');
+      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/so_0/${pid}.jpg`;
+    } catch { /* fall through */ }
+    return null;
+  };
+  if (p.embedUrl) return derive(p.embedUrl) ?? undefined;
+  if (isCloudinaryEmbed(p.videoUrl)) return derive(p.videoUrl) ?? undefined;
+  return undefined;
 };
 
 const slideshowSlugs = [
@@ -126,10 +140,12 @@ const Slideshow: React.FC = () => {
             <video
               key={`a-${slotAProject.slug}`}
               src={getSlideshowVideoUrl(slotAProject)}
+              poster={getSlideshowPoster(slotAProject)}
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
             />
           </div>
         )}
@@ -144,10 +160,12 @@ const Slideshow: React.FC = () => {
             <video
               key={`b-${slotBProject.slug}`}
               src={getSlideshowVideoUrl(slotBProject)}
+              poster={getSlideshowPoster(slotBProject)}
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
             />
           </div>
         )}
