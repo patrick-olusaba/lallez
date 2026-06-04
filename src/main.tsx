@@ -8,3 +8,14 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <App />
   </React.StrictMode>
 );
+
+// Hide preloader once React has mounted
+const preloader = document.getElementById('preloader');
+if (preloader) {
+  // Small delay so the first paint is absorbed
+  setTimeout(() => {
+    preloader.classList.add('fade-out');
+    // Remove from DOM after the fade transition
+    setTimeout(() => preloader.remove(), 600);
+  }, 300);
+}

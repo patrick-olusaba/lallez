@@ -255,4 +255,64 @@ export const projects: Project[] = [
     thumbnailUrl:
       'https://arradr.com/wp-content/uploads/2022/11/CB-Back-To-Love.jpg',
   },
+  {
+    id: '26',
+    slug: 'breeder-lw-bila-bazenga-inaboh',
+    client: 'BREEDER LW',
+    title: 'BILA BAZENGA INABOH',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/BREEDER_LW_-_BILA_BAZENGA_INABOH_Official_Video_-_BREEDER_LW_xc1lmc.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=BREEDER_LW_-_BILA_BAZENGA_INABOH_Official_Video_-_BREEDER_LW_xc1lmc',
+  },
+  {
+    id: '27',
+    slug: 'kappy-kairetu',
+    client: 'Kappy',
+    title: 'Kairetu',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/Kappy-_Kairetu_Official_Music_Video_-_Kappy_x8hyhv.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=Kappy-_Kairetu_Official_Music_Video_-_Kappy_x8hyhv',
+  },
+  {
+    id: '28',
+    slug: 'jefflawgan-tingisa',
+    client: 'Jefflawgan ft Mordecai Dex & H_art the Band',
+    title: 'Tingisa',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/Jefflawgan_ft_Mordecai_Dex_H_art_the_Band_-_Tingisa_Official_Music_Video_Sms_Skiza_6982528_to_811_-_Jefflawgan_etd97k.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=Jefflawgan_ft_Mordecai_Dex_H_art_the_Band_-_Tingisa_Official_Music_Video_Sms_Skiza_6982528_to_811_-_Jefflawgan_etd97k',
+  },
+  {
+    id: '29',
+    slug: 'muhanjii-waiyanza',
+    client: 'Muhanjii',
+    title: 'Waiyanza',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/Muhanjii_-_Waiyanza_Official_Music_Video_-_Muhanjii_gfb8mr.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=Muhanjii_-_Waiyanza_Official_Music_Video_-_Muhanjii_gfb8mr',
+  },
+  {
+    id: '30',
+    slug: 'fichua-teaser-2',
+    client: 'South Sudgic Pictures',
+    title: 'FiCHUA Teaser 2',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/FiCHUA_Teaser_2_2026_-_South_Sudgic_Pictures_fcvxgm.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=FiCHUA_Teaser_2_2026_-_South_Sudgic_Pictures_fcvxgm',
+  },
+  {
+    id: '31',
+    slug: 'fichua-teaser-1',
+    client: 'South Sudgic Pictures',
+    title: 'FiCHUA Teaser 1',
+    videoUrl:
+      'https://res.cloudinary.com/dhzf4okkm/video/upload/FiCHUA_Teaser_1_2026_-_South_Sudgic_Pictures_v9p4yk.mp4',
+    embedUrl:
+      'https://player.cloudinary.com/embed/?cloud_name=dhzf4okkm&public_id=FiCHUA_Teaser_1_2026_-_South_Sudgic_Pictures_v9p4yk',
+  },
 ];

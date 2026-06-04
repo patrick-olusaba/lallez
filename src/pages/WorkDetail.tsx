@@ -1,22 +1,42 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProjects } from '../context/AdminContext';
+import { Project } from '../types';
 import './WorkDetail.css';
+
+/** Detect Cloudinary player embed URLs so they render as iframes even when stored in videoUrl. */
+const isCloudinaryEmbed = (url: string) =>
+  url.includes('player.cloudinary.com/embed');
+
+/** Return the effective embed URL for a project, or null if it's a direct video. */
+const resolveEmbedUrl = (p: Project): string | null => {
+  if (p.embedUrl) return p.embedUrl;
+  if (isCloudinaryEmbed(p.videoUrl)) return p.videoUrl;
+  return null;
+};
+
+/** Return the direct video URL, or null if the project uses an embed. */
+const resolveVideoUrl = (p: Project): string | null => {
+  if (isCloudinaryEmbed(p.videoUrl)) return null;
+  return p.videoUrl || null;
+};
+
+/** Ensure Cloudinary embed URLs carry autoplay/muted/loop params. */
+const normalizeEmbedUrl = (url: string): string => {
+  if (!isCloudinaryEmbed(url)) return url;
+  const u = new URL(url);
+  if (!u.searchParams.has('autoplay')) u.searchParams.set('autoplay', '1');
+  if (!u.searchParams.has('muted')) u.searchParams.set('muted', '1');
+  if (!u.searchParams.has('loop')) u.searchParams.set('loop', '1');
+  return u.toString();
+};
 
 const WorkDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const videoRef = useRef<HTMLVideoElement>(null);
   const { projects } = useProjects();
 
   const currentIndex = projects.findIndex((p) => p.slug === slug);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.currentTime = 0;
-    video.play().catch(() => {});
-  }, [slug]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -50,17 +70,31 @@ const WorkDetail: React.FC = () => {
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
   const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
+  const embedUrl = resolveEmbedUrl(project);
+  const videoUrl = resolveVideoUrl(project);
+
   return (
     <main className="page-work-detail">
       <div className="stage">
-        <video
-          ref={videoRef}
-          src={project.videoUrl}
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+        {embedUrl ? (
+          <iframe
+            key={project.slug}
+            src={normalizeEmbedUrl(embedUrl)}
+            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+          />
+        ) : (
+          <video
+            key={project.slug}
+            src={videoUrl!}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        )}
       </div>
 
       {/* Meta info */}

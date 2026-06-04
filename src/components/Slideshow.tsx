@@ -1,14 +1,43 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../context/AdminContext';
+import { Project } from '../types';
 import './Slideshow.css';
 
 const INTERVAL_MS = 5000;
+
+/** Detect Cloudinary embed URLs that can't be played in a <video> tag. */
+const isCloudinaryEmbed = (url: string) =>
+  url.includes('player.cloudinary.com/embed');
+
+/** Get a playable video URL for the slideshow, deriving direct URL from embed if needed. */
+const getSlideshowVideoUrl = (p: Project): string => {
+  if (p.videoUrl && !isCloudinaryEmbed(p.videoUrl)) return p.videoUrl;
+  if (p.embedUrl) {
+    try {
+      const u = new URL(p.embedUrl);
+      const cn = u.searchParams.get('cloud_name');
+      const pid = u.searchParams.get('public_id');
+      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/${pid}.mp4`;
+    } catch { /* fall through */ }
+  }
+  if (isCloudinaryEmbed(p.videoUrl)) {
+    try {
+      const u = new URL(p.videoUrl);
+      const cn = u.searchParams.get('cloud_name');
+      const pid = u.searchParams.get('public_id');
+      if (cn && pid) return `https://res.cloudinary.com/${cn}/video/upload/${pid}.mp4`;
+    } catch { /* fall through */ }
+  }
+  return p.videoUrl || '';
+};
 
 const slideshowSlugs = [
   'safe', 'pholks', 'nikedp', 'muse', 'lioness-2', 'ourselves',
   'polosxf-2', 'lioness', 'tyga-bops', 'nglh', 'kardashians',
   'anitta-missy-elliott-lobby', 'jhene-aiko-tyga-pop-smoke-sunshine',
+  'breeder-lw-bila-bazenga-inaboh', 'kappy-kairetu', 'jefflawgan-tingisa',
+  'muhanjii-waiyanza', 'fichua-teaser-2', 'fichua-teaser-1',
 ];
 
 const Slideshow: React.FC = () => {
@@ -17,17 +46,14 @@ const Slideshow: React.FC = () => {
   const slides = slideshowSlugs
     .map((slug) => projects.find((p) => p.slug === slug))
     .filter((p): p is NonNullable<typeof p> => p != null);
+
   const [current, setCurrent] = useState(0);
   const [entering, setEntering] = useState<number | null>(null);
   const [leaving, setLeaving] = useState<number | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const busyRef = useRef(false);
-
-  // Refs for the two video slots
-  const videoARef = useRef<HTMLVideoElement>(null); // slot A
-  const videoBRef = useRef<HTMLVideoElement>(null); // slot B
-  const slotRef = useRef<'a' | 'b'>('a'); // which slot is currently visible
+  const slotRef = useRef<'a' | 'b'>('a');
 
   const transition = useCallback(
     (toIndex: number) => {
@@ -35,29 +61,13 @@ const Slideshow: React.FC = () => {
       busyRef.current = true;
 
       const fromIndex = current;
-      const visibleSlot = slotRef.current;
-      const hiddenSlot = visibleSlot === 'a' ? 'b' : 'a';
+      const hiddenSlot = slotRef.current === 'a' ? 'b' : 'a';
 
-      // Set the hidden slot's video to the next slide and start playing
-      const hiddenVideo = hiddenSlot === 'a' ? videoARef.current : videoBRef.current;
-      if (hiddenVideo) {
-        hiddenVideo.src = slides[toIndex].videoUrl;
-        hiddenVideo.currentTime = 0;
-      }
-
-      // Start crossfade — CSS handles the opacity animation
       setLeaving(fromIndex);
       setEntering(toIndex);
 
-      // After CSS transition completes, clean up
       setTimeout(() => {
-        // Pause the old video
-        const oldVideo = visibleSlot === 'a' ? videoARef.current : videoBRef.current;
-        if (oldVideo) oldVideo.pause();
-
-        // Hidden slot is now visible
         slotRef.current = hiddenSlot;
-
         setCurrent(toIndex);
         setEntering(null);
         setLeaving(null);
@@ -75,7 +85,6 @@ const Slideshow: React.FC = () => {
     transition((current - 1 + slides.length) % slides.length);
   }, [current, transition]);
 
-  // Auto-advance
   useEffect(() => {
     timerRef.current = setInterval(advance, INTERVAL_MS);
     return () => {
@@ -83,7 +92,6 @@ const Slideshow: React.FC = () => {
     };
   }, [advance]);
 
-  // Keyboard
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') advance();
@@ -100,7 +108,6 @@ const Slideshow: React.FC = () => {
   const currentProject = slides[current] ?? slides[0];
   const isSlotAVisible = slotRef.current === 'a';
 
-  // Determine which project each slot shows
   const slotAIndex = isSlotAVisible ? current : entering;
   const slotBIndex = isSlotAVisible ? entering : current;
   const slotAProject = slotAIndex !== null ? (slides[slotAIndex] ?? null) : null;
@@ -117,8 +124,8 @@ const Slideshow: React.FC = () => {
             } ${!isSlotAVisible && entering !== null ? 'home-slide-image--entering' : ''}`}
           >
             <video
-              ref={videoARef}
-              src={slotAProject.videoUrl}
+              key={`a-${slotAProject.slug}`}
+              src={getSlideshowVideoUrl(slotAProject)}
               autoPlay
               muted
               loop
@@ -135,8 +142,8 @@ const Slideshow: React.FC = () => {
             } ${isSlotAVisible && entering !== null ? 'home-slide-image--entering' : ''}`}
           >
             <video
-              ref={videoBRef}
-              src={slotBProject.videoUrl}
+              key={`b-${slotBProject.slug}`}
+              src={getSlideshowVideoUrl(slotBProject)}
               autoPlay
               muted
               loop
@@ -145,7 +152,6 @@ const Slideshow: React.FC = () => {
           </div>
         )}
 
-        {/* Meta — always shows the current project */}
         <Link className="meta" to={`/work/${currentProject.slug}`}>
           <div className="line-1">{currentProject.client}</div>
           <div className="line-2">{currentProject.title}</div>

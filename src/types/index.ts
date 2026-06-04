@@ -5,4 +5,5 @@ export interface Project {
   title: string;
   videoUrl: string;
   thumbnailUrl?: string;
+  embedUrl?: string;
 }

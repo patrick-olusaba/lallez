@@ -58,6 +58,7 @@ const AdminPanel: React.FC = () => {
   const titleRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
+  const embedRef = useRef<HTMLInputElement>(null);
   const thumbRef = useRef<HTMLInputElement>(null);
 
   const openAdd = () => {
@@ -70,6 +71,7 @@ const AdminPanel: React.FC = () => {
       if (titleRef.current) titleRef.current.value = '';
       if (slugRef.current) slugRef.current.value = '';
       if (videoRef.current) videoRef.current.value = '';
+      if (embedRef.current) embedRef.current.value = '';
       if (thumbRef.current) thumbRef.current.value = '';
     }, 0);
   };
@@ -83,6 +85,7 @@ const AdminPanel: React.FC = () => {
       if (titleRef.current) titleRef.current.value = p.title;
       if (slugRef.current) slugRef.current.value = p.slug;
       if (videoRef.current) videoRef.current.value = p.videoUrl;
+      if (embedRef.current) embedRef.current.value = p.embedUrl ?? '';
       if (thumbRef.current) thumbRef.current.value = p.thumbnailUrl ?? '';
     }, 0);
   };
@@ -93,14 +96,15 @@ const AdminPanel: React.FC = () => {
     const title = titleRef.current?.value.trim() ?? '';
     const slug = slugRef.current?.value.trim() ?? '';
     const videoUrl = videoRef.current?.value.trim() ?? '';
+    const embedUrl = embedRef.current?.value.trim() ?? '';
     const thumbnailUrl = thumbRef.current?.value.trim() ?? '';
 
-    if (!client || !title || !videoUrl) {
-      setError('Client, Title, and Video URL are required.');
+    if (!client || !title || (!videoUrl && !embedUrl)) {
+      setError('Client, Title, and Video URL (or Embed URL) are required.');
       return;
     }
 
-    const data = { slug, client, title, videoUrl, thumbnailUrl };
+    const data = { slug, client, title, videoUrl, thumbnailUrl, embedUrl };
 
     if (editingId) {
       updateProject(editingId, data);
@@ -166,6 +170,10 @@ const AdminPanel: React.FC = () => {
             <label className="admin-form-full">
               Video URL *
               <input ref={videoRef} placeholder="https://..." />
+            </label>
+            <label className="admin-form-full">
+              Embed URL <small>(Cloudinary / iframe player)</small>
+              <input ref={embedRef} placeholder="https://player.cloudinary.com/embed/..." />
             </label>
             <label className="admin-form-full">
               Thumbnail URL

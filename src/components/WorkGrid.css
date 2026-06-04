@@ -55,6 +55,13 @@
   transform: none;
 }
 
+.thumb-placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--color-border-light);
+  z-index: 0;
+}
+
 .work-block video {
   position: absolute;
   top: 0;

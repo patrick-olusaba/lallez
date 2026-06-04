@@ -22,7 +22,8 @@
   align-items: stretch;
 }
 
-.page-work-detail .stage video {
+.page-work-detail .stage video,
+.page-work-detail .stage iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -30,6 +31,7 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  border: none;
 }
 
 /* ── Meta ────────────────────────────────────────────────────────────────────── */

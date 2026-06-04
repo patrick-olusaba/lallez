@@ -4,6 +4,45 @@ import { useProjects } from '../context/AdminContext';
 import { Project } from '../types';
 import './WorkGrid.css';
 
+/** Detect Cloudinary player embed URLs that can't be played in a <video> tag. */
+const isCloudinaryEmbed = (url: string) =>
+  url.includes('player.cloudinary.com/embed');
+
+/** Extract cloud_name and public_id from a Cloudinary embed URL. */
+const parseCloudinaryParams = (url: string): { cloudName: string; publicId: string } | null => {
+  try {
+    const u = new URL(url);
+    const cloudName = u.searchParams.get('cloud_name');
+    const publicId = u.searchParams.get('public_id');
+    if (cloudName && publicId) return { cloudName, publicId };
+  } catch { /* invalid URL */ }
+  return null;
+};
+
+/** Build a direct Cloudinary MP4 URL for hover preview. */
+const buildCloudinaryVideoUrl = (cloudName: string, publicId: string) =>
+  `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.mp4`;
+
+/** Build a Cloudinary thumbnail (first frame) as a poster/fallback image. */
+const buildCloudinaryPosterUrl = (cloudName: string, publicId: string) =>
+  `https://res.cloudinary.com/${cloudName}/video/upload/so_0/${publicId}.jpg`;
+
+/** Get a playable video URL for hover preview, deriving from embed if needed. */
+const getPreviewVideoUrl = (p: Project): string | null => {
+  if (p.videoUrl && !isCloudinaryEmbed(p.videoUrl)) return p.videoUrl;
+  const params = parseCloudinaryParams(p.embedUrl || p.videoUrl);
+  if (params) return buildCloudinaryVideoUrl(params.cloudName, params.publicId);
+  return null;
+};
+
+/** Get a poster/thumbnail URL, deriving from Cloudinary if no explicit thumbnail is set. */
+const getPosterUrl = (p: Project): string | null => {
+  if (p.thumbnailUrl) return p.thumbnailUrl;
+  const params = parseCloudinaryParams(p.embedUrl || p.videoUrl);
+  if (params) return buildCloudinaryPosterUrl(params.cloudName, params.publicId);
+  return null;
+};
+
 const WorkGrid: React.FC = () => {
   const { projects } = useProjects();
 
@@ -36,30 +75,39 @@ const WorkBlock: React.FC<WorkBlockProps> = ({ project }) => {
     video.pause();
   }, []);
 
+  const previewUrl = getPreviewVideoUrl(project);
+  const posterUrl = getPosterUrl(project);
+
   return (
     <Link
-      className="work-block has-video"
+      className={`work-block${previewUrl ? ' has-video' : ''}`}
       to={`/work/${project.slug}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="thumbnails">
         <div className="image-sizer" />
-        <video
-          ref={videoRef}
-          className="video-thumbnail"
-          src={project.videoUrl}
-          muted
-          loop
-          playsInline
-          preload="none"
-        />
-        {project.thumbnailUrl && (
+        {previewUrl && (
+          <video
+            ref={videoRef}
+            className="video-thumbnail"
+            src={previewUrl}
+            poster={posterUrl ?? undefined}
+            muted
+            loop
+            playsInline
+            preload="none"
+          />
+        )}
+        {posterUrl && (
           <img
-            src={project.thumbnailUrl}
+            src={posterUrl}
             alt=""
             loading="lazy"
           />
+        )}
+        {!posterUrl && !previewUrl && (
+          <div className="thumb-placeholder" />
         )}
       </div>
       <div className="meta">
