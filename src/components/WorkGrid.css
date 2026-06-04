@@ -1,0 +1,87 @@
+/*
+ * Work Grid — 2-column responsive grid of project thumbnails.
+ */
+
+.work-grid {
+  margin: 0 20px;
+  font-size: 0;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+/* ── Work Block ──────────────────────────────────────────────────────────────── */
+.work-block {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(50% - 40px);
+  margin: 0 20px 80px 20px;
+  color: var(--color-text);
+  transition: color var(--transition);
+}
+
+.work-block:hover {
+  color: var(--color-accent);
+}
+
+.work-block .image-sizer {
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.work-block .thumbnails {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.work-block img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.work-block:hover img {
+  transform: scale(1.03);
+}
+
+.work-block.has-video:hover img {
+  opacity: 0;
+  transform: none;
+}
+
+.work-block video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+/* ── Meta ────────────────────────────────────────────────────────────────────── */
+.work-block .meta {
+  margin-top: 15px;
+  text-transform: uppercase;
+}
+
+.work-block .line-1 {
+  font-weight: 900;
+  font-size: 20px;
+  display: block;
+  line-height: 1.2;
+}
+
+.work-block .line-2 {
+  font-weight: 600;
+  font-size: 16px;
+  display: block;
+  margin-top: 5px;
+}

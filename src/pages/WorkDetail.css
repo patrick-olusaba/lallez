@@ -1,0 +1,100 @@
+/*
+ * Work Detail — full-screen video player with slideshow navigation.
+ */
+
+.page-work-detail {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.page-work-detail .stage {
+  height: 100vh;
+  margin: 0;
+  position: relative;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: stretch;
+  align-items: stretch;
+}
+
+.page-work-detail .stage video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ── Meta ────────────────────────────────────────────────────────────────────── */
+.page-work-detail .meta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 30px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
+}
+
+.page-work-detail .meta .line-1 {
+  font-weight: 900;
+  font-size: 20px;
+  display: block;
+  color: var(--color-text);
+}
+
+.page-work-detail .meta .line-2 {
+  font-weight: 600;
+  font-size: 16px;
+  display: block;
+  margin-top: 3px;
+  color: var(--color-text-muted);
+}
+
+/* ── Navigation arrows ───────────────────────────────────────────────────────── */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  cursor: pointer;
+  padding: 10px;
+  background: none;
+  border: none;
+  transition: 0.4s;
+}
+
+.nav-arrow--left { left: 40px; }
+.nav-arrow--left:hover { transform: translate(-5px, -50%); }
+.nav-arrow--right { right: 40px; }
+.nav-arrow--right:hover { transform: translate(5px, -50%); }
+
+.nav-arrow path { stroke: var(--color-text); }
+.nav-arrow:hover path { stroke: var(--color-accent); }
+
+/* ── Close button ────────────────────────────────────────────────────────────── */
+.close-btn {
+  position: absolute;
+  top: 47px;
+  right: 40px;
+  z-index: 20;
+  font-size: 18px;
+  text-transform: uppercase;
+  text-align: right;
+  transition: 0.4s;
+  padding: 5px;
+  color: var(--color-text);
+}
+
+.close-btn:hover {
+  color: var(--color-accent);
+}

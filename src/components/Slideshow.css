@@ -1,0 +1,136 @@
+/*
+ * Home Slideshow — seamless crossfade between two video slots.
+ */
+
+.home-slideshow {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--color-bg);
+  position: relative;
+  z-index: 100;
+}
+
+.home-slideshow-images {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Slide layers ────────────────────────────────────────────────────────────── */
+.home-slide-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  z-index: 0;
+}
+
+.home-slide-image video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.home-slide-image--leaving {
+  animation: crossfadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 1;
+}
+
+@keyframes crossfadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.home-slide-image--entering {
+  animation: crossfadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 2;
+}
+
+@keyframes crossfadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ── Meta text ───────────────────────────────────────────────────────────────── */
+.home-slideshow .meta {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1;
+  z-index: 10;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.home-slideshow .meta .line-1 {
+  font-weight: 900;
+  font-size: 44px;
+  margin-bottom: 10px;
+  color: var(--color-text);
+  transition: color var(--transition);
+}
+
+.home-slideshow .meta .line-2 {
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--color-text);
+  transition: color var(--transition);
+}
+
+.home-slideshow .meta:hover .line-1,
+.home-slideshow .meta:hover .line-2 {
+  color: var(--color-accent);
+}
+
+/* ── Arrows ──────────────────────────────────────────────────────────────────── */
+.home-slideshow .arrow {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  cursor: pointer;
+  z-index: 200;
+  padding: 10px;
+  transition: 0.4s;
+}
+
+.home-slideshow .arrow.right { right: 40px; }
+.home-slideshow .arrow.right:hover { transform: translate(5px, -50%); }
+.home-slideshow .arrow.left { left: 40px; }
+.home-slideshow .arrow.left:hover { transform: translate(-5px, -50%); }
+
+.home-slideshow .arrow path {
+  stroke: var(--color-text);
+}
+.home-slideshow .arrow:hover path {
+  stroke: var(--color-accent);
+}
+
+/* ── Down arrow ──────────────────────────────────────────────────────────────── */
+.down-arrow {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  padding: 20px;
+  z-index: 100;
+  bottom: 10px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.down-arrow path { stroke: var(--color-text); }
+.down-arrow:hover path { stroke: var(--color-accent); }
+
+.bounce {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-10px); }
+}
